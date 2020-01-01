@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Order from '../../components/Order/Order'
 import axios from '../../axios-order'
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
-import Spinner from '../../components/UI/Spinner/Spinner'
+// import Spinner from '../../components/UI/Spinner/Spinner'
 
 
 class Orders extends Component {
@@ -13,7 +13,7 @@ class Orders extends Component {
 	componentDidMount() {
 		axios.get('/orders.json')
 			.then(response => {
-				console.log(response.data);
+				//console.log(response.data);
 				const fetchedOrders = [];
 				for (const key in response.data) {
 					fetchedOrders.push({ id: key, ...response.data[key] });
