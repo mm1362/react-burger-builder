@@ -6,16 +6,16 @@ export default function withErrorHandler(WrappedComponent, axios) {
 		state = {
 			error: null
 		}
+
 		constructor() {
 			super();
 			this.reqInterceptor = axios.interceptors.request.use(request => {
 				this.setState({ error: null })
 				return request;
 			})
-
 			this.resInterceptor = axios.interceptors.response.use(response => response, error => {
 				console.log(error);
-				this.setState(	{ error: error })
+				this.setState({ error: error })
 			})
 		}
 		componentWillUnmount() {
@@ -43,3 +43,4 @@ export default function withErrorHandler(WrappedComponent, axios) {
 		}
 	}
 }
+

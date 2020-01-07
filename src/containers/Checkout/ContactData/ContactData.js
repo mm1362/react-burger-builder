@@ -6,6 +6,8 @@ import Spinner from '../../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import Input from '../../../components/Input/Input';
 import { connect } from 'react-redux';
+import * as actions from '../../../store/actions/index';
+
 
 class ContactData extends Component {
 	state = {
@@ -91,14 +93,11 @@ class ContactData extends Component {
 			},
 		},
 		isFormValid:false,
-		loading: false,
 	}
 
 
 	orderHandler = (event) => {
 		event.preventDefault();
-
-		this.setState({ loading: true })
 		const formDataValues = {};
 		for (const element in this.state.orderForm) {
 			formDataValues[element] = this.state.orderForm[element].value;
@@ -109,17 +108,8 @@ class ContactData extends Component {
 			price: this.props.price,
 			formData: formDataValues,
 		}
-		axios.post('/orders.json', order)
-			.then(response => {
-				this.setState({ loading: false, purchasing: false });
-				if (response) {
-					this.props.history.push('/')
-				}
-			})
-			.catch(error => {
-				console.log(error)
-				this.setState({ loading: false, purchasing: false });
-			});
+		this.props.orderBurgerHandler(order);
+
 	}
 	checkValidity(value, rules) {
 		if(!rules) return true;
@@ -182,7 +172,7 @@ class ContactData extends Component {
 			</form>
 		);
 
-		if (this.state.loading) {
+		if (this.props.loading) {
 			form = <Spinner />;
 		}
 
@@ -199,9 +189,17 @@ class ContactData extends Component {
 
 const mapStateToProps = state => {
 	return {
-		ings: state.ingredients,
-		price: state.totalPrice
+		ings: state.burgerBuilder.ingredients,
+		price: state.burgerBuilder.totalPrice,
+		loading:state.order.loading,
 	};
 };
 
-export default connect(mapStateToProps)(withErrorHandler(ContactData, axios));
+const mapDispatchToProps = dispatch => {
+	return {
+		orderBurgerHandler: (orderData)=>{dispatch(actions.purchaseBurger(orderData))},
+	};
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(withErrorHandler(ContactData, axios));
+//export default connect(mapStateToProps,mapDispatchToProps)(ContactData);
