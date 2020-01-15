@@ -88,11 +88,11 @@ class ContactData extends Component {
 					]
 				},
 				value: 'cheapest',
-				validation:{},
+				validation: {},
 				valid: true,
 			},
 		},
-		isFormValid:false,
+		isFormValid: false,
 	}
 
 
@@ -106,13 +106,14 @@ class ContactData extends Component {
 		const order = {
 			ingredients: this.props.ings,
 			price: this.props.price,
-			formData: formDataValues,
+			orderData: formDataValues,
+			userId: this.props.userId,
 		}
-		this.props.orderBurgerHandler(order);
+		this.props.orderBurgerHandler(order, this.props.token);
 
 	}
 	checkValidity(value, rules) {
-		if(!rules) return true;
+		if (!rules) return true;
 		let isValid = true;
 		if (rules.required) {
 			isValid = value.trim() !== "" && isValid;
@@ -123,6 +124,14 @@ class ContactData extends Component {
 		if (rules.maxLength) {
 			isValid = value.trim().length <= rules.minLength && isValid;
 		}
+		if (rules.isEmail) {
+			const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+			isValid = pattern.test(value) && isValid
+		}
+		if (rules.isNumeric) {
+			const pattern = /^\d+$/;
+			isValid = pattern.test(value) && isValid
+		}
 		return isValid;
 	}
 
@@ -132,14 +141,14 @@ class ContactData extends Component {
 		newOrderFormElement.value = event.target.value;
 		newOrderFormElement.valid = this.checkValidity(newOrderFormElement.value, newOrderFormElement.validation);
 		newOrderFormElement.touched = true;
-		let isFormValid=true;
-		for(const element in orderForm) {
-				isFormValid = orderForm[element].valid && isFormValid;
-			
+		let isFormValid = true;
+		for (const element in orderForm) {
+			isFormValid = orderForm[element].valid && isFormValid;
+
 		}
 
 		orderForm[identifier] = newOrderFormElement;
-		this.setState({ orderForm,isFormValid })
+		this.setState({ orderForm, isFormValid })
 
 	}
 
@@ -191,15 +200,17 @@ const mapStateToProps = state => {
 	return {
 		ings: state.burgerBuilder.ingredients,
 		price: state.burgerBuilder.totalPrice,
-		loading:state.order.loading,
+		loading: state.order.loading,
+		token: state.auth.token,
+		userId: state.auth.userId,
 	};
 };
 
 const mapDispatchToProps = dispatch => {
 	return {
-		orderBurgerHandler: (orderData)=>{dispatch(actions.purchaseBurger(orderData))},
+		orderBurgerHandler: (orderData, token) => { dispatch(actions.purchaseBurger(orderData, token)) },
 	};
 };
 
-export default connect(mapStateToProps,mapDispatchToProps)(withErrorHandler(ContactData, axios));
+export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(ContactData, axios));
 //export default connect(mapStateToProps,mapDispatchToProps)(ContactData);

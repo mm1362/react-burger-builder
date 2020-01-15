@@ -8,6 +8,7 @@ import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler";
 import { connect } from "react-redux";
 import * as actions from "../../store/actions/index";
 import axios from "../../axios-order";
+import { Redirect } from "react-router-dom";
 
 class BurgerBuilder extends Component {
     state = {
@@ -26,7 +27,12 @@ class BurgerBuilder extends Component {
     }
 
     purchaseHandler = () => {
-        this.setState({ purchasing: true });
+        if (this.props.isAuthenticated)
+            this.setState({ purchasing: true });
+        else {
+            this.props.setAuthRedirectPathHandler('/checkout')
+            this.props.history.push('/auth');
+        }
     };
 
     purchaseCancelHandler = () => {
@@ -59,6 +65,7 @@ class BurgerBuilder extends Component {
                         removeIngredientHandler={this.props.removeIngredientHandler}
                         ingredients={this.props.ings}
                         price={this.props.price}
+                        isAuthenticated={this.props.isAuthenticated}
                         purchasable={this.updatePurchasable(this.props.ings)}
                         purchaseHandler={this.purchaseHandler}
                     />
@@ -89,6 +96,7 @@ const mapStateToProps = (state) => {
         ings: state.burgerBuilder.ingredients,
         price: state.burgerBuilder.totalPrice,
         error: state.burgerBuilder.error,
+        isAuthenticated: state.auth.token !== null,
 
     }
 }
@@ -97,7 +105,8 @@ const mapDispatchToProps = (dispatch) => {
         addIngredientHandler: (ingredientName) => dispatch(actions.addIngredient(ingredientName)),
         removeIngredientHandler: (ingredientName) => dispatch(actions.removeIngredient(ingredientName)),
         initIngredientHandler: () => dispatch(actions.initIngredients()),
-        initPurchaseHandler: () => { dispatch(actions.purchaseInit()) }
+        initPurchaseHandler: () => { dispatch(actions.purchaseInit()) },
+        setAuthRedirectPathHandler: (path) => { dispatch(actions.setAuthRedirectPath(path)) },
     }
 }
 
