@@ -7,6 +7,7 @@ import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import Input from '../../../components/Input/Input';
 import { connect } from 'react-redux';
 import * as actions from '../../../store/actions/index';
+import { checkValidity } from '../../../shared/utility';
 
 
 class ContactData extends Component {
@@ -112,34 +113,12 @@ class ContactData extends Component {
 		this.props.orderBurgerHandler(order, this.props.token);
 
 	}
-	checkValidity(value, rules) {
-		if (!rules) return true;
-		let isValid = true;
-		if (rules.required) {
-			isValid = value.trim() !== "" && isValid;
-		}
-		if (rules.minLength) {
-			isValid = value.trim().length >= rules.minLength && isValid;
-		}
-		if (rules.maxLength) {
-			isValid = value.trim().length <= rules.minLength && isValid;
-		}
-		if (rules.isEmail) {
-			const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-			isValid = pattern.test(value) && isValid
-		}
-		if (rules.isNumeric) {
-			const pattern = /^\d+$/;
-			isValid = pattern.test(value) && isValid
-		}
-		return isValid;
-	}
 
 	inputChangeHandler = (event, identifier) => {
 		const orderForm = { ...this.state.orderForm };
 		const newOrderFormElement = { ...orderForm[identifier] }
 		newOrderFormElement.value = event.target.value;
-		newOrderFormElement.valid = this.checkValidity(newOrderFormElement.value, newOrderFormElement.validation);
+		newOrderFormElement.valid = checkValidity(newOrderFormElement.value, newOrderFormElement.validation);
 		newOrderFormElement.touched = true;
 		let isFormValid = true;
 		for (const element in orderForm) {

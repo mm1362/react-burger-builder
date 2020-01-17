@@ -49,7 +49,6 @@ export function auth(email, password, isSignup = true) {
 		if (!isSignup) url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAgavDvbXyQEHJOspvJSev13FN5XdRV4b0'
 		axios.post(url, authData)
 			.then(response => {
-				console.log(response)
 				localStorage.setItem('token', response.data.idToken);
 				localStorage.setItem('userId', response.data.localId);
 				const expirationDate = new Date(new Date().getTime() + response.data.expiresIn * 1000);
@@ -73,8 +72,6 @@ export function setAuthRedirectPath(path) {
 
 
 export function authCheckState() {
-	console.log('hello');
-
 	return dispatch => {
 		const token = localStorage.getItem('token');
 		if (!token)

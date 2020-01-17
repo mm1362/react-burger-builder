@@ -8,7 +8,6 @@ import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler";
 import { connect } from "react-redux";
 import * as actions from "../../store/actions/index";
 import axios from "../../axios-order";
-import { Redirect } from "react-router-dom";
 
 class BurgerBuilder extends Component {
     state = {

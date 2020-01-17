@@ -1,13 +1,19 @@
-import React, { Component } from "react";
+import React, { Component, Suspense } from "react";
 import Layout from "./hoc/Layout/Layout";
 import BurgerBuilder from "./containers/BurgerBuilder/BurgerBuilder";
-import Checkout from "./containers/Checkout/Checkout";
 import { Route, Switch, Redirect } from "react-router-dom";
-import Orders from "./containers/Orders/Orders";
-import Auth from "./containers/Auth/Auth";
 import Logout from "./containers/Auth/Logout/Logout";
 import { connect } from "react-redux";
 import * as actions from "./store/actions";
+
+// import Checkout from "./containers/Checkout/Checkout";
+// import Orders from "./containers/Orders/Orders";
+// import Auth from "./containers/Auth/Auth";
+
+const AsyncOrders = React.lazy(() => import('./containers/Orders/Orders'))
+const AsyncAuth = React.lazy(() => import('./containers/Auth/Auth'))
+const AsyncCheckout = React.lazy(() => import('./containers/Checkout/Checkout'))
+
 
 class App extends Component {
 	componentDidMount() {
@@ -17,25 +23,28 @@ class App extends Component {
 		let routs = (
 			<Switch>
 				<Route exact path='/' component={BurgerBuilder} />
-				<Route exact path='/auth' component={Auth} />
-				<Redirect to='/'/>
+				<Route exact path='/auth' component={AsyncAuth} />
+				<Redirect to='/' />
 			</Switch>
 		);
 		if (this.props.isAuthenticated) {
 			routs = (
 				<Switch>
-					<Route exact path='/' component={BurgerBuilder} />
-					<Route exact path='/orders' component={Orders} />
+					<Route path='/checkout' component={AsyncCheckout} />
+					<Route exact path='/orders' component={AsyncOrders} />
 					<Route exact path='/logout' component={Logout} />
-					<Route path='/checkout' component={Checkout} />
-					<Redirect to='/'/>
+					<Route exact path='/auth' component={AsyncAuth} />
+					<Route exact path='/' component={BurgerBuilder} />
+					<Redirect to='/' />
 				</Switch>
 			);
 		}
 		return (
 			<div>
 				<Layout>
-					{routs}
+					<Suspense fallback={<div>Loading...</div>}>
+						{routs}
+					</Suspense>
 				</Layout>
 			</div>
 		);
