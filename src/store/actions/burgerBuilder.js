@@ -1,5 +1,4 @@
 import * as actionTypes from "../actions/actionsTypes";
-import axios from "../../axios-order";
 
 export function addIngredient(name) {
 	return {
@@ -29,19 +28,20 @@ export function fetchIngredientsFailed() {
 	};
 }
 export function initIngredients() {
-	return dispatch => {
-
-
-		axios.get("/ingredients.json")
-			.then(response => {
-				// console.log(response.data	);
-				dispatch(setIngredients(response.data));
-			})
-			.catch(error => {
-				console.log(error);
-				dispatch(fetchIngredientsFailed());
-			});
+	// return dispatch => {
+	// 	axios.get("/ingredients.json")
+	// 		.then(response => {
+	// 			dispatch(setIngredients(response.data));
+	// 		})
+	// 		.catch(error => {
+	// 			console.log(error);
+	// 			dispatch(fetchIngredientsFailed());
+	// 		});
+	// };
+	return {
+		type: actionTypes.INIT_INGREDIENTS,
 	};
+
 }
 
 

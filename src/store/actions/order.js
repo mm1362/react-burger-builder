@@ -28,16 +28,21 @@ export function purchaseBurgerFail(error) {
 }
 
 export function purchaseBurger(orderData, token) {
-	return dispatch => {
-		dispatch(purchaseBurgerStart());
-		axios.post('/orders.json?auth=' + token, orderData)
-			.then(response => {
-				dispatch(purchaseBurgerSuccess(response.data.name, orderData));
-			})
-			.catch(error => {
-				console.log(error)
-				dispatch(purchaseBurgerFail(error));
-			});
+	// return dispatch => {
+	// 	dispatch(purchaseBurgerStart());
+	// 	axios.post('/orders.json?auth=' + token, orderData)
+	// 		.then(response => {
+	// 			dispatch(purchaseBurgerSuccess(response.data.name, orderData));
+	// 		})
+	// 		.catch(error => {
+	// 			console.log(error)
+	// 			dispatch(purchaseBurgerFail(error));
+	// 		});
+	// };
+	return {
+		type: actionTypes.PURCHASE_BURGER,
+		orderData, 
+		token,
 	};
 }
 
@@ -61,25 +66,28 @@ export function fetchOrdersFail(error) {
 }
 
 export function fetchOrders(token, userId) {
-	return dispatch => {
-		dispatch(fetchOrdersStart());
-		//const queryParams = '?auth=' + token;
-		//const queryParams = '?auth=' + token + '&orderBy="userId"&equalTo="' + userId+'"';
-		const queryParams = `?auth=${token}&orderBy="userId"&equalTo="${userId}"`;
-		axios.get('/orders.json' + queryParams)
-			.then(response => {
-				console.log(response.data);
-				const fetchedOrders = [];
-				for (const key in response.data) {
-					fetchedOrders.push({ id: key, ...response.data[key] });
+	// return dispatch => {
+	// 	dispatch(fetchOrdersStart());
+	// 	const queryParams = `?auth=${token}&orderBy="userId"&equalTo="${userId}"`;
+	// 	axios.get('/orders.json' + queryParams)
+	// 		.then(response => {
+	// 			console.log(response.data);
+	// 			const fetchedOrders = [];
+	// 			for (const key in response.data) {
+	// 				fetchedOrders.push({ id: key, ...response.data[key] });
 
-				}
-				dispatch(fetchOrdersSuccess(fetchedOrders));
-			})
-			.catch(error => {
-				console.log(error);
-				dispatch(fetchOrdersFail(error));
+	// 			}
+	// 			dispatch(fetchOrdersSuccess(fetchedOrders));
+	// 		})
+	// 		.catch(error => {
+	// 			console.log(error);
+	// 			dispatch(fetchOrdersFail(error));
 
-			})
+	// 		})
+	// };
+	return {
+		type: actionTypes.FETCH_ORDERS,
+		token, 
+		userId
 	};
 }
