@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useEffect } from 'react'
 import Order from '../../components/Order/Order'
 import axios from '../../axios-order'
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
@@ -8,37 +8,35 @@ import Spinner from '../../components/UI/Spinner/Spinner'
 // import Spinner from '../../components/UI/Spinner/Spinner'
 
 
-class Orders extends Component {
-	componentDidMount() {
-		this.props.fetchOrdersHandler(this.props.token,this.props.userId);
-	}
+function Orders(props) {
+	useEffect(() => {
+		props.fetchOrdersHandler(props.token, props.userId);
+	}, [])
 
-	render() {
-		let orders = <Spinner />
-		if (!this.props.loading)
-			orders = this.props.orders.map(order => <Order key={order.id} {...order} />);
-		return (
-			<div>
-				{orders}
-			</div>
-		)
-	}
+	let orders = <Spinner />
+	if (!props.loading)
+		orders = props.orders.map(order => <Order key={order.id} {...order} />);
+	return (
+		<div>
+			{orders}
+		</div>
+	)
 }
 
 
 const mapStateToProps = (state) => {
-    return {
-        orders: state.order.orders,
-        loading: state.order.loading,
-        token: state.auth.token,
-        userId: state.auth.userId,
+	return {
+		orders: state.order.orders,
+		loading: state.order.loading,
+		token: state.auth.token,
+		userId: state.auth.userId,
 
-    }
+	}
 }
 const mapDispatchToProps = (dispatch) => {
-    return {
-        fetchOrdersHandler: (token,userId) => { dispatch(actions.fetchOrders(token,userId)) }
-    }
+	return {
+		fetchOrdersHandler: (token, userId) => { dispatch(actions.fetchOrders(token, userId)) }
+	}
 }
 
 

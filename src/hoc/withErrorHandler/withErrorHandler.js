@@ -1,46 +1,42 @@
-import React, { Component } from 'react'
+import React, { useEffect, useState } from 'react'
 import Modal from '../../components/UI/Modal/Modal'
 
 export default function withErrorHandler(WrappedComponent, axios) {
-	return class extends Component {
-		state = {
-			error: null
+	return function (props) {
+		const [error, setError] = useState(null)
+
+		const reqInterceptor = axios.interceptors.request.use(request => {
+			setError(null);
+			return request;
+		})
+		const resInterceptor = axios.interceptors.response.use(response => response, err => {
+			console.log(err);
+			setError(err);
+		})
+
+		useEffect(() => {
+			return () => {
+				axios.interceptors.request.eject(reqInterceptor)
+				axios.interceptors.response.eject(resInterceptor)
+			}
+		}, [reqInterceptor, resInterceptor])
+
+
+		const errorConfirmedHandler = () => {
+			setError(null);
 		}
 
-		constructor() {
-			super();
-			this.reqInterceptor = axios.interceptors.request.use(request => {
-				this.setState({ error: null })
-				return request;
-			})
-			this.resInterceptor = axios.interceptors.response.use(response => response, error => {
-				console.log(error);
-				this.setState({ error: error })
-			})
-		}
-		componentWillUnmount() {
-			axios.interceptors.request.eject(this.reqInterceptor)
-			axios.interceptors.response.eject(this.resInterceptor)
-
-		}
-
-		errorConfirmedHandler = () => {
-			this.setState({ error: null })
-		}
-
-		render() {
-			return (
-				<React.Fragment>
-					<Modal
-						show={this.state.error}
-						backdropClickHandler={this.errorConfirmedHandler}
-					>
-						{this.state.error ? this.state.error.message : null}
-					</Modal>
-					<WrappedComponent {...this.props} />
-				</React.Fragment>
-			)
-		}
+		return (
+			<React.Fragment>
+				<Modal
+					show={error}
+					backdropClickHandler={errorConfirmedHandler}
+				>
+					{error ? error.message : null}
+				</Modal>
+				<WrappedComponent {...props} />
+			</React.Fragment>
+		)
 	}
 }
 

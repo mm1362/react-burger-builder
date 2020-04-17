@@ -1,5 +1,5 @@
 import * as actionTypes from "../actions/actionsTypes";
-import axios from "../../axios-order";
+// import axios from "../../axios-order";
 
 export function purchaseInit() {
 	return {

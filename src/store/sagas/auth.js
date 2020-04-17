@@ -42,7 +42,7 @@ export function* authUserSaga(action) {
 
 	} catch (error) {
 		console.log(error.response)
-		yield put(action.authFail(error.response.data.error));
+		yield put(actions.authFail(error.response.data.error));
 	}
 
 }

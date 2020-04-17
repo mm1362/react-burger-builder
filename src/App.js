@@ -1,4 +1,4 @@
-import React, { Component, Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
 import Layout from "./hoc/Layout/Layout";
 import BurgerBuilder from "./containers/BurgerBuilder/BurgerBuilder";
 import { Route, Switch, Redirect } from "react-router-dom";
@@ -15,40 +15,38 @@ const AsyncAuth = React.lazy(() => import('./containers/Auth/Auth'))
 const AsyncCheckout = React.lazy(() => import('./containers/Checkout/Checkout'))
 
 
-class App extends Component {
-	componentDidMount() {
-		this.props.autoSignupHandler();
-	}
-	render() {
-		let routs = (
+function App(props) {
+	useEffect(() => {
+		props.autoSignupHandler();
+	}, []);
+	let routs = (
+		<Switch>
+			<Route exact path='/' component={BurgerBuilder} />
+			<Route exact path='/auth' component={AsyncAuth} />
+			<Redirect to='/' />
+		</Switch>
+	);
+	if (props.isAuthenticated) {
+		routs = (
 			<Switch>
-				<Route exact path='/' component={BurgerBuilder} />
+				<Route path='/checkout' component={AsyncCheckout} />
+				<Route exact path='/orders' component={AsyncOrders} />
+				<Route exact path='/logout' component={Logout} />
 				<Route exact path='/auth' component={AsyncAuth} />
+				<Route exact path='/' component={BurgerBuilder} />
 				<Redirect to='/' />
 			</Switch>
 		);
-		if (this.props.isAuthenticated) {
-			routs = (
-				<Switch>
-					<Route path='/checkout' component={AsyncCheckout} />
-					<Route exact path='/orders' component={AsyncOrders} />
-					<Route exact path='/logout' component={Logout} />
-					<Route exact path='/auth' component={AsyncAuth} />
-					<Route exact path='/' component={BurgerBuilder} />
-					<Redirect to='/' />
-				</Switch>
-			);
-		}
-		return (
-			<div>
-				<Layout>
-					<Suspense fallback={<div>Loading...</div>}>
-						{routs}
-					</Suspense>
-				</Layout>
-			</div>
-		);
 	}
+	return (
+		<div>
+			<Layout>
+				<Suspense fallback={<div>Loading...</div>}>
+					{routs}
+				</Suspense>
+			</Layout>
+		</div>
+	);
 }
 
 function mapStateToProps(state) {
@@ -62,6 +60,5 @@ function mapDispatchToProps(dispatch) {
 		autoSignupHandler: () => { dispatch(actions.authCheckState()) },
 	}
 };
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
