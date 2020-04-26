@@ -11,7 +11,7 @@ function Modal(props) {
                 style={{ transform: props.show ? 'translateX(0)' : 'translateX(-100vw)' }}
             >
                 {props.children}
-            </div>
+            </  div>
         </React.Fragment>
     )
 }

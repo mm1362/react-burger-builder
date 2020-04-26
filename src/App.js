@@ -16,9 +16,10 @@ const AsyncCheckout = React.lazy(() => import('./containers/Checkout/Checkout'))
 
 
 function App(props) {
+	const { autoSignupHandler } = props;
 	useEffect(() => {
-		props.autoSignupHandler();
-	}, []);
+		autoSignupHandler();
+	}, [autoSignupHandler]);
 	let routs = (
 		<Switch>
 			<Route exact path='/' component={BurgerBuilder} />

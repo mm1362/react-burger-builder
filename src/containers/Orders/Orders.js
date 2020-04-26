@@ -9,9 +9,10 @@ import Spinner from '../../components/UI/Spinner/Spinner'
 
 
 function Orders(props) {
+	const { fetchOrdersHandler} = props;
 	useEffect(() => {
-		props.fetchOrdersHandler(props.token, props.userId);
-	}, [])
+		fetchOrdersHandler(props.token, props.userId);
+	}, [fetchOrdersHandler])
 
 	let orders = <Spinner />
 	if (!props.loading)
